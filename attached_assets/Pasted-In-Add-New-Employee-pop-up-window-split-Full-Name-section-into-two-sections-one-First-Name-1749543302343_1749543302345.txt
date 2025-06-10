@@ -1,0 +1,30 @@
+In "Add New Employee" pop-up window:
+- split "Full Name" section into two sections; one "First Name" and one "Last Name".
+- add an "alt. Email" section.
+- adjust "Shift" section menu options to include only options "1", "2", or "3".
+- adjust "Department" section to say "Location" with options  "Bellevue Medical Center", "Factoria Medical Center", "Lynnwood Medical Center", "Northshore Medical Center", " Smokey Point Medical Center", and cusomizeable entries.
+- adjust "Availability" menu options to be customizeable which, once created, can be viewed and selected in later "New Employee" entries.
+- adjust "Seniority" section to show the year the employee started working.
+--------
+
+Shift coverage po-up window
+-error message pops up when submitting an entry: "Error   400: {"message":"Validation error","errors":"[{"code":"invalid_type",..."
+- make the first entry option "Employee Needing Coverage"
+- adjust - by selecting an employee needing coverage the information that will auto-populate is their "Location" and their "shift".
+- next have the "Coverage Date" be the second entry section
+- third entry option should be "Reason for coverage"
+- adjust the title of the "Reason for coverage" section to "Coverage Notes"
+
+-------
+
+Task Management shows an error message when attempting to make an entry.
+
+"[plugin:runtime-error-plugin] A <Select.Item /> must have a value prop that is not an empty string. This is because the Select value can be set to an empty string to clear the selection and show the placeholder."
+
+--------
+- Remove "Templates" from main menu. The templates describe the ability to make customizeable menu options and some that trigger specific auto-filling of designated selecteable items
+--------
+
+- in the Announcement pop-up make the options in the "Target Audience" selection menu mirror the "Location" menu options of the "Add New Employee" entries.
+- "Target Audience" section determines who will be automatically notified of the content of the announcement.
+-------
