@@ -24,7 +24,6 @@ const navigation = [
   { name: "Contact Directory", href: "/contacts", icon: Users },
   { name: "Shift Coverage", href: "/coverage", icon: Clock },
   { name: "Task Management", href: "/tasks", icon: CheckSquare },
-  { name: "Templates", href: "/templates", icon: FileText },
   { name: "Announcements", href: "/announcements", icon: Megaphone },
   { name: "Text Scanning", href: "/scanning", icon: Scan },
   { name: "Analytics", href: "/analytics", icon: BarChart2 },
@@ -54,14 +53,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             </div>
           </div>
         </div>
-        
+
         {/* Navigation Menu */}
         <nav className="flex-1 p-4 space-y-2">
           <div className="space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
               const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
-              
+
               return (
                 <Link key={item.name} href={item.href}>
                   <a 
@@ -81,7 +80,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             })}
           </div>
         </nav>
-        
+
         {/* User Profile Section */}
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 cursor-pointer">
