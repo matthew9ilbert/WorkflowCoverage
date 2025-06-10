@@ -3,4 +3,4 @@
 # The ID of the project (different from project name) on the provider's system. This is populated as a way to update existing deployments.
 project_id: a394c80c-34c0-4eed-a58d-229fcab5cb3e
 # The framework of the web application (examples: nextjs, react, vue, etc.)
-framework: create-react-app
+framework: vite

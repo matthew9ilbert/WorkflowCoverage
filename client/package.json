@@ -5,14 +5,15 @@
     "build": "vite build"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "wouter": "^2.10.0"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "wouter": "2.10.0",
+    "serve": "14.2.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.0.3",
-    "vite": "^5.0.0"
+    "@vitejs/plugin-react": "4.2.1",
+    "vite": "5.1.4"
   }
 }
