@@ -1,0 +1,8 @@
+{
+    "workbench.editor.defaultBinaryEditor": "default",
+    "workbench.editor.autoLockGroups": {
+        "repl": true,
+        "workbench.editorinputs.searchEditorInput": true,
+        "jupyter-notebook": true
+    }
+}
