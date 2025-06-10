@@ -226,6 +226,9 @@ export default function TaskManagement() {
                 <SelectContent>
                   <SelectItem value="all">All Assignees</SelectItem>
                   <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {tasks && [...new Set(tasks.map((task: Task) => task.assignedTo).filter(Boolean))].map((assignee) => (
+                    <SelectItem key={assignee} value={assignee}>{assignee}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

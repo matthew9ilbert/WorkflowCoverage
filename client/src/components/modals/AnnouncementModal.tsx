@@ -76,7 +76,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title.trim() || !formData.content.trim()) {
       toast({
         title: "Validation Error",
@@ -85,7 +85,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
       });
       return;
     }
-    
+
     createAnnouncementMutation.mutate(formData);
   };
 
@@ -95,7 +95,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
         <DialogHeader>
           <DialogTitle>Create Announcement</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -121,7 +121,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
               </Select>
             </div>
           </div>
-          
+
           <div>
             <Label htmlFor="title">Announcement Title</Label>
             <Input
@@ -132,7 +132,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
               required
             />
           </div>
-          
+
           <div>
             <Label htmlFor="content">Content</Label>
             <Textarea
@@ -144,7 +144,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
               required
             />
           </div>
-          
+
           <div>
             <Label htmlFor="audience">Target Audience</Label>
             <Select value={formData.audience} onValueChange={(value) => setFormData(prev => ({ ...prev, audience: value }))}>
@@ -153,18 +153,15 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Staff</SelectItem>
-                <SelectItem value="housekeeping">Housekeeping Department</SelectItem>
-                <SelectItem value="maintenance">Maintenance Department</SelectItem>
-                <SelectItem value="security">Security Department</SelectItem>
-                <SelectItem value="facilities">Facilities Department</SelectItem>
-                <SelectItem value="supervisors">Supervisors Only</SelectItem>
-                <SelectItem value="day_shift">Day Shift</SelectItem>
-                <SelectItem value="evening_shift">Evening Shift</SelectItem>
-                <SelectItem value="night_shift">Night Shift</SelectItem>
+                <SelectItem value="Bellevue Medical Center">Bellevue Medical Center</SelectItem>
+                <SelectItem value="Factoria Medical Center">Factoria Medical Center</SelectItem>
+                <SelectItem value="Lynnwood Medical Center">Lynnwood Medical Center</SelectItem>
+                <SelectItem value="Northshore Medical Center">Northshore Medical Center</SelectItem>
+                <SelectItem value="Smokey Point Medical Center">Smokey Point Medical Center</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Switch
@@ -174,7 +171,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
               />
               <Label htmlFor="isActive">Publish immediately</Label>
             </div>
-            
+
             <div>
               <Label>Expiration Date (Optional)</Label>
               <Popover>
@@ -205,7 +202,7 @@ export default function AnnouncementModal({ open, onOpenChange }: AnnouncementMo
               </p>
             </div>
           </div>
-          
+
           <div className="flex justify-end space-x-2 pt-4">
             <Button 
               type="button" 
