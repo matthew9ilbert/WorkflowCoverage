@@ -17,7 +17,7 @@ export const config = {
 };
 
 // Validate required configurations
-const requiredVars = ['DATABASE_URL', 'JWT_SECRET'];
+const requiredVars = ['DATABASE_URL', 'JWT_SECRET', 'SESSION_SECRET'];
 for (const varName of requiredVars) {
   if (!process.env[varName]) {
     throw new Error(`Missing required environment variable: ${varName}`);
