@@ -32,6 +32,7 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   role: varchar("role").default("staff"),
   department: varchar("department"),
+  roles: varchar("roles").array().notNull().default(["user"]),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -49,25 +50,6 @@ export const employees = pgTable("employees", {
   availability: varchar("availability").default("available"),
   contactMethod: varchar("contact_method").default("email"),
   status: varchar("status").default("active"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Tasks table for task management
-export const tasks = pgTable("tasks", {
-  id: serial("id").primaryKey(),
-  taskId: varchar("task_id").unique().notNull(),
-  title: varchar("title").notNull(),
-  description: text("description"),
-  priority: varchar("priority").default("medium"),
-  status: varchar("status").default("pending"),
-  assignedTo: varchar("assigned_to"),
-  location: varchar("location"),
-  deadline: timestamp("deadline"),
-  estimatedHours: integer("estimated_hours"),
-  completedAt: timestamp("completed_at"),
-  requestor: varchar("requestor"),
-  notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -91,34 +73,21 @@ export const coverageRequests = pgTable("coverage_requests", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Templates table for communication templates
-export const templates = pgTable("templates", {
+// Coverage history for analytics
+export const coverageHistory = pgTable("coverage_history", {
   id: serial("id").primaryKey(),
-  templateId: varchar("template_id").unique().notNull(),
-  name: varchar("name").notNull(),
-  type: varchar("type").notNull(),
-  fields: jsonb("fields").notNull(),
-  content: text("content"),
-  isActive: boolean("is_active").default(true),
-  usageCount: integer("usage_count").default(0),
+  assignmentId: varchar("assignment_id").unique().notNull(),
+  employeeId: varchar("employee_id").notNull(),
+  shift: varchar("shift").notNull(),
+  approvedById: varchar("approved_by_id"),
+  date: timestamp("date").notNull(),
+  location: varchar("location").notNull(),
+  outcome: varchar("outcome").notNull(),
+  responseTime: integer("response_time"),
+  rating: integer("rating"),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// Announcements table
-export const announcements = pgTable("announcements", {
-  id: serial("id").primaryKey(),
-  announcementId: varchar("announcement_id").unique().notNull(),
-  title: varchar("title").notNull(),
-  content: text("content").notNull(),
-  author: varchar("author").notNull(),
-  audience: varchar("audience").default("all"),
-  priority: varchar("priority").default("normal"),
-  isActive: boolean("is_active").default(true),
-  expiresAt: timestamp("expires_at"),
-  readBy: jsonb("read_by").default([]),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  startTime: varchar("start_time"),
+  endTime: varchar("end_time")
 });
 
 // Text inputs for scanning
@@ -133,20 +102,6 @@ export const textInputs = pgTable("text_inputs", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Coverage history for analytics
-export const coverageHistory = pgTable("coverage_history", {
-  id: serial("id").primaryKey(),
-  assignmentId: varchar("assignment_id").unique().notNull(),
-  employeeId: varchar("employee_id").notNull(),
-  shift: varchar("shift").notNull(),
-  date: timestamp("date").notNull(),
-  location: varchar("location").notNull(),
-  outcome: varchar("outcome").notNull(),
-  responseTime: integer("response_time"),
-  rating: integer("rating"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 // Analytics metrics
 export const metrics = pgTable("metrics", {
   id: serial("id").primaryKey(),
@@ -157,61 +112,106 @@ export const metrics = pgTable("metrics", {
   metadata: jsonb("metadata").default({}),
 });
 
-// Schema exports
-export type UpsertUser = typeof users.$inferInsert;
-export type User = typeof users.$inferSelect;
+// Code reviews table
+export const codeReviews = pgTable("code_reviews", {
+  id: varchar("id").primaryKey(),
+  date: timestamp("date").defaultNow(),
+  findings: jsonb("findings").notNull(),
+  reviewedBy: varchar("reviewed_by").notNull(),
+});
 
+// Tasks table
+export const tasks = pgTable("tasks", {
+  id: serial("id").primaryKey(),
+  title: varchar("title").notNull(),
+  description: text("description"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Templates table
+export const templates = pgTable("templates", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  content: text("content").notNull()
+});
+
+// Announcements table
+export const announcements = pgTable("announcements", {
+  id: serial("id").primaryKey(),
+  message: text("message").notNull(),
+  expiresAt: timestamp("expires_at")
+});
+
+// User interface
+export interface User {
+  id: string;
+  roles: string[];
+  email?: string;
+  name?: string;
+}
+
+// Type exports
 export type InsertEmployee = typeof employees.$inferInsert;
 export type Employee = typeof employees.$inferSelect;
-
-export type InsertTask = typeof tasks.$inferInsert;
-export type Task = typeof tasks.$inferSelect;
 
 export type InsertCoverageRequest = typeof coverageRequests.$inferInsert;
 export type CoverageRequest = typeof coverageRequests.$inferSelect;
 
-export type InsertTemplate = typeof templates.$inferInsert;
-export type Template = typeof templates.$inferSelect;
-
-export type InsertAnnouncement = typeof announcements.$inferInsert;
-export type Announcement = typeof announcements.$inferSelect;
+export type InsertCoverageHistory = typeof coverageHistory.$inferInsert;
+export type CoverageHistory = typeof coverageHistory.$inferSelect;
 
 export type InsertTextInput = typeof textInputs.$inferInsert;
 export type TextInput = typeof textInputs.$inferSelect;
 
-export type InsertCoverageHistory = typeof coverageHistory.$inferInsert;
-export type CoverageHistoryRecord = typeof coverageHistory.$inferSelect;
-
 export type InsertMetric = typeof metrics.$inferInsert;
 export type Metric = typeof metrics.$inferSelect;
+
+export type InsertCodeReview = typeof codeReviews.$inferInsert;
+export type CodeReview = typeof codeReviews.$inferSelect;
+
+export type InsertTask = typeof tasks.$inferInsert;
+export type Task = typeof tasks.$inferSelect;
+
+export type InsertAnnouncement = typeof announcements.$inferInsert;
+export type Announcement = typeof announcements.$inferSelect;
 
 // Insert schemas
 export const insertEmployeeSchema = createInsertSchema(employees).omit({
   id: true,
   createdAt: true,
-  updatedAt: true,
-});
-
-export const insertTaskSchema = createInsertSchema(tasks).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
+  updatedAt: true
 });
 
 export const insertCoverageRequestSchema = createInsertSchema(coverageRequests).omit({
   id: true,
   createdAt: true,
-  updatedAt: true,
+  updatedAt: true
 });
 
-export const insertTemplateSchema = createInsertSchema(templates).omit({
+export const insertCoverageHistorySchema = createInsertSchema(coverageHistory).omit({
   id: true,
-  createdAt: true,
-  updatedAt: true,
+  createdAt: true
 });
 
-export const insertAnnouncementSchema = createInsertSchema(announcements).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+export const insertTaskSchema = createInsertSchema(tasks);
+export const insertAnnouncementSchema = createInsertSchema(announcements);
+
+// Final schema export
+export const schema = {
+  users,
+  sessions,
+  coverageHistory,
+  coverageRequests,
+  employees,
+  textInputs,
+  metrics,
+  codeReviews,
+  tasks,
+  templates,
+  announcements,
+  insertEmployeeSchema,
+  insertCoverageRequestSchema,
+  insertCoverageHistorySchema,
+  insertTaskSchema,
+  insertAnnouncementSchema
+};

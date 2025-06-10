@@ -9,6 +9,9 @@ import {
   insertAnnouncementSchema 
 } from "@shared/schema";
 import { z } from "zod";
+import { CoverageService } from './services/coverage.service';
+import { AIAssistantService } from './services/aiAssistant.service';
+import { verifyAIAccess } from './middleware/aiAuth';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -172,6 +175,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Coverage routes
+  app.post('/api/coverage/request', isAuthenticated, async (req: any, res) => {
+    try {
+      const { shift, reason } = insertCoverageRequestSchema.parse(req.body);
+      const result = await CoverageService.requestCoverage(
+        req.user.claims.sub,
+        shift as string,
+        reason as string
+      );
+      res.json(result);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err.message : 'Request failed';
+      res.status(400).json({ error });
+    }
+  });
+
+  app.get('/api/coverage/history', isAuthenticated, async (req: any, res) => {
+    try {
+      const employeeId = req.query.employeeId;
+      const history = await CoverageService.getCoverageHistory(employeeId);
+      res.json(history);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err.message : 'Failed to get history';
+      res.status(400).json({ error });
+    }
+  });
+
+  app.post('/api/coverage/approve/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const result = await CoverageService.approveCoverage(req.params.id, req.user.claims.sub);
+      res.json(result);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err.message : 'Failed to approve coverage';
+      res.status(400).json({ error });
+    }
+  });
+
   // Announcement routes
   app.get('/api/announcements', isAuthenticated, async (req, res) => {
     try {
@@ -236,6 +276,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error processing text input:", error);
       res.status(500).json({ message: "Failed to process text input" });
+    }
+  });
+
+  // AI Assistant endpoints
+  app.post('/api/ai/assist', isAuthenticated, verifyAIAccess, async (req: any, res) => {
+    try {
+      const response = await AIAssistantService.getInstance().handleRequest(
+        req.body.message,
+        req.context
+      );
+      res.json(response);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err.message : 'AI assistance unavailable';
+      res.status(500).json({ error });
+    }
+  });
+
+  app.get('/api/ai/insights', isAuthenticated, verifyAIAccess, async (req, res) => {
+    try {
+      const insights = await AIAssistantService.getInstance().getCodebaseInsights();
+      res.json(insights);
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err.message : 'Failed to get insights';
+      res.status(500).json({ error });
     }
   });
 

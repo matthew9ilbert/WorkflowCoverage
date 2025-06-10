@@ -7,6 +7,7 @@
     "noEmit": true,
     "module": "ESNext",
     "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["esnext", "dom", "dom.iterable"],
     "jsx": "preserve",
     "esModuleInterop": true,
@@ -17,7 +18,10 @@
     "types": ["node", "vite/client"],
     "paths": {
       "@/*": ["./client/src/*"],
-      "@shared/*": ["./shared/*"]
+      "@shared/*": ["./shared/*"],
+      "@server/*": ["./server/*"],
+      "@config": ["./server/config"],
+      "@logger": ["./server/middleware/logger"]
     }
   }
 }
