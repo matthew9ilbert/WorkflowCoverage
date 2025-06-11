@@ -103,7 +103,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Navigation Menu */}
         <nav className="flex-1 p-4 space-y-2">
           <div className="space-y-1">
-            {navigation.map((item, index) => {
+            {navigation && navigation.map((item, index) => {
               const Icon = item.icon;
               const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
               const isCustom = index >= defaultNavigation.length;

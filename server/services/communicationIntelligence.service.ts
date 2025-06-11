@@ -723,8 +723,13 @@ class PatternAnalyzer {
 
     const patterns: any[] = [];
     
-    // Find peak hours
-    const peakHour = Object.keys(hourCounts).reduce((a, b) => 
+    // Find peak hours - only if we have data
+    const hourKeys = Object.keys(hourCounts);
+    if (hourKeys.length === 0) {
+      return patterns; // Return empty patterns if no messages
+    }
+    
+    const peakHour = hourKeys.reduce((a, b) => 
       hourCounts[Number(a)] > hourCounts[Number(b)] ? a : b
     );
 
