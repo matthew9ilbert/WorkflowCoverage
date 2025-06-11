@@ -303,6 +303,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Apple Shortcuts API routes (public access for automation)
+  app.use('/api/shortcuts', (await import('./shortcuts')).default);
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -125,7 +125,12 @@ export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
   title: varchar("title").notNull(),
   description: text("description"),
-  createdAt: timestamp("created_at").defaultNow()
+  status: varchar("status").notNull().default("pending"),
+  priority: varchar("priority").default("medium"),
+  assignedTo: varchar("assigned_to"),
+  dueDate: timestamp("due_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
 // Templates table
