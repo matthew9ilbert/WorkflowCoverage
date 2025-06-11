@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 import { 
   Activity, 
   Users, 
@@ -10,23 +11,47 @@ import {
   Scan, 
   BarChart2,
   Home,
-  ChevronDown 
+  ChevronDown,
+  Plus,
+  Edit,
+  X,
+  Check,
+  Monitor
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const navigation = [
+const defaultNavigation = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "Contact Directory", href: "/contacts", icon: Users },
   { name: "Shift Coverage", href: "/coverage", icon: Clock },
   { name: "Task Management", href: "/tasks", icon: CheckSquare },
   { name: "Announcements", href: "/announcements", icon: Megaphone },
   { name: "Text Scanning", href: "/scanning", icon: Scan },
+  { name: "Message Monitoring", href: "/monitoring", icon: Monitor },
   { name: "Analytics", href: "/analytics", icon: BarChart2 },
+];
+
+const iconOptions = [
+  { name: "Home", component: Home },
+  { name: "Users", component: Users },
+  { name: "Clock", component: Clock },
+  { name: "CheckSquare", component: CheckSquare },
+  { name: "FileText", component: FileText },
+  { name: "Megaphone", component: Megaphone },
+  { name: "Scan", component: Scan },
+  { name: "BarChart2", component: BarChart2 },
+  { name: "Activity", component: Activity },
+  { name: "Monitor", component: Monitor },
 ];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {

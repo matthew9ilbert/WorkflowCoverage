@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { storage } from './storage';
-import { insertTaskSchema, insertTextInputSchema } from '../shared/schema';
+import { insertTaskSchema } from '../shared/schema';
 import { z } from 'zod';
+import { MessageMonitorService } from './services/messageMonitor';
 
 const router = Router();
 
@@ -132,6 +133,70 @@ router.get('/dashboard-summary', async (req, res) => {
   } catch (error) {
     console.error('Error fetching dashboard summary:', error);
     res.status(500).json({ error: 'Failed to fetch dashboard summary' });
+  }
+});
+
+// Webhook endpoint for message monitoring
+router.post('/webhook/:sourceId', async (req, res) => {
+  try {
+    const { sourceId } = req.params;
+    const messageMonitor = MessageMonitorService.getInstance();
+    
+    const result = await messageMonitor.processWebhookMessage(sourceId, req.body);
+    res.json(result);
+  } catch (error) {
+    console.error('Webhook processing error:', error);
+    res.status(500).json({ error: 'Failed to process webhook' });
+  }
+});
+
+// Get message source status
+router.get('/sources', async (req, res) => {
+  try {
+    const messageMonitor = MessageMonitorService.getInstance();
+    const sources = await messageMonitor.getSourceStatus();
+    res.json({ success: true, sources });
+  } catch (error) {
+    console.error('Error fetching sources:', error);
+    res.status(500).json({ error: 'Failed to fetch sources' });
+  }
+});
+
+// Enable/disable message sources
+router.post('/sources/:sourceId/toggle', async (req, res) => {
+  try {
+    const { sourceId } = req.params;
+    const { enabled, config } = req.body;
+    const messageMonitor = MessageMonitorService.getInstance();
+    
+    if (enabled) {
+      await messageMonitor.enableSource(sourceId, config);
+    } else {
+      await messageMonitor.disableSource(sourceId);
+    }
+    
+    res.json({ success: true, message: `Source ${sourceId} ${enabled ? 'enabled' : 'disabled'}` });
+  } catch (error) {
+    console.error('Error toggling source:', error);
+    res.status(500).json({ error: 'Failed to toggle source' });
+  }
+});
+
+// Generate Apple Shortcuts webhook URL
+router.get('/sources/:sourceId/webhook-url', async (req, res) => {
+  try {
+    const { sourceId } = req.params;
+    const messageMonitor = MessageMonitorService.getInstance();
+    const webhookUrl = await messageMonitor.createShortcutTrigger(sourceId);
+    
+    res.json({ 
+      success: true, 
+      webhookUrl,
+      instructions: `Use this URL in your Apple Shortcut to send ${sourceId} messages for processing`
+    });
+  } catch (error) {
+    console.error('Error creating webhook URL:', error);
+    res.status(500).json({ error: 'Failed to create webhook URL' });
   }
 });
 
