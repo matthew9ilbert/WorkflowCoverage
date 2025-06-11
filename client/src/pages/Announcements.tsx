@@ -64,7 +64,10 @@ export default function Announcements() {
           <Button className="w-full mb-3 justify-center" onClick={() => alert('Post new announcement')}>
             Post New Announcement
           </Button>
-          <p>Customize bulletin board content...</p>
+          <div className="bulletin-board">
+            <p>Interactive Bulletin Board:</p>
+            <div className="pin" onClick={() => alert('Pin clicked!')}>Click any pin to interact</div>
+          </div>
         </CardContent>
       </Card>
 

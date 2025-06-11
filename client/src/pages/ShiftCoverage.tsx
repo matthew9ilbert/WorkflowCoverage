@@ -60,24 +60,23 @@ export default function ShiftCoverage() {
           Request Coverage
         </Button>
       </div>
-      
+
       {/* Calendar */}
       <div className="mb-6">
         <Card>
           <CardContent className="p-6">
             <Calendar
-              onDayClick={(day) => console.log('Selected day:', day)}
-              selected={new Date()}
-              colorScheme="blue"
-              labels={({ date }) => ({
-                content: `Events`,
-                style: { backgroundColor: '#ffeb3b', color: '#ffffff' }
-              })}
-            />
+                onSelect={(date) => console.log('Selected date:', date)}
+                modifiersStyles={{
+                  selected: { backgroundColor: '#ffeb3b', color: '#ffffff' },
+                  today: { backgroundColor: '#ff5733', color: '#ffffff' },
+                }} 
+                onDayDoubleClick={(day) => alert(`Day double-clicked: ${day}`)}
+              />
           </CardContent>
         </Card>
       </div>
-  
+
       {/* Coverage Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
@@ -93,7 +92,7 @@ export default function ShiftCoverage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -107,7 +106,7 @@ export default function ShiftCoverage() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -122,7 +121,7 @@ export default function ShiftCoverage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Active Coverage Requests */}
       <Card>
         <CardHeader>

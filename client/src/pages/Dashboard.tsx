@@ -184,10 +184,20 @@ export default function Dashboard() {
             <CardContent className="space-y-3">
               <Button 
                 className="w-full justify-start bg-blue-600 text-white hover:bg-blue-700"
-                onClick={() => setAddEmployeeOpen(true)}
+                onClick={() => {
+                  setAddEmployeeOpen(true);
+                  document.body.classList.toggle('menu-open', false);  // Auto-close menu
+                }}
               >
                 <UserPlus className="w-5 h-5 mr-3" />
                 Add Employee
+              </Button>
+              <Button 
+                className="w-full justify-start bg-indigo-600 text-white hover:bg-indigo-700"
+                onClick={() => alert('Quick Action Executed')}
+              >
+                <Plus className="w-5 h-5 mr-3" />
+                New Quick Action
               </Button>
 
               <Button 

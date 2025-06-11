@@ -259,7 +259,10 @@ export default function TaskManagement() {
           <Button className="w-full mb-3 justify-center" onClick={() => alert('Add new to-do item')}>
             Add New To-Do
           </Button>
-          <p>Customize to-do list content...</p>
+          <ul className="interactive-todo-list">
+            <li onClick={() => alert('To-Do item clicked')}>Item 1</li>
+            <li onClick={() => alert('To-Do item clicked')}>Item 2</li>
+          </ul>
         </CardContent>
       </Card>
 
