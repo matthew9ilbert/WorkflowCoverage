@@ -110,7 +110,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
               return (
                 <div key={item.name} className="relative group">
-                  <Link href={item.href} className={cn(
+                  <Link href={item.href} onClick={onClose} className={cn(
                     "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group-hover:bg-gray-100 dark:group-hover:bg-gray-800",
                     isActive 
                       ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700 dark:bg-blue-900/20 dark:text-blue-300" 

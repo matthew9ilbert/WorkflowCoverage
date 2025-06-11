@@ -66,12 +66,8 @@ export default function ShiftCoverage() {
         <Card>
           <CardContent className="p-6">
             <Calendar
-                onSelect={(date) => console.log('Selected date:', date)}
-                modifiersStyles={{
-                  selected: { backgroundColor: '#ffeb3b', color: '#ffffff' },
-                  today: { backgroundColor: '#ff5733', color: '#ffffff' },
-                }} 
-                onDayDoubleClick={(day) => alert(`Day double-clicked: ${day}`)}
+                onSelect={(date) => console.log('User input for date:', date)}
+                onClick={(date) => alert('Add event on: ' + date)}
               />
           </CardContent>
         </Card>

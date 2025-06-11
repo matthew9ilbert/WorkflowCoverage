@@ -59,8 +59,10 @@ CardDescription.displayName = "CardDescription"
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+>(({ className, children, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props}>
+    <div className="card-content" onTripleClick={(e) => alert('Customize ' + e.target.textContent)}>{children}</div>
+  </div>
 ))
 CardContent.displayName = "CardContent"
 

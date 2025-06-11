@@ -260,8 +260,7 @@ export default function TaskManagement() {
             Add New To-Do
           </Button>
           <ul className="interactive-todo-list">
-            <li onClick={() => alert('To-Do item clicked')}>Item 1</li>
-            <li onClick={() => alert('To-Do item clicked')}>Item 2</li>
+            <li onClick={() => alert('Add a new to-do item')}>No items yet. Click to add.</li>
           </ul>
         </CardContent>
       </Card>

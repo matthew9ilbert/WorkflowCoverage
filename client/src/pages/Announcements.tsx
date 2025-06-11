@@ -65,8 +65,9 @@ export default function Announcements() {
             Post New Announcement
           </Button>
           <div className="bulletin-board">
-            <p>Interactive Bulletin Board:</p>
-            <div className="pin" onClick={() => alert('Pin clicked!')}>Click any pin to interact</div>
+            <p>Click to add announcements, triple-click to customize:</p>
+            <div onTripleClick={() => alert('Customize item')}>No items yet. Click to add.</div>
+            <Button onClick={() => alert('Share to group')}>Share</Button>
           </div>
         </CardContent>
       </Card>
