@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -78,6 +77,14 @@ export default function CommunicationHub() {
   const [activeTab, setActiveTab] = useState("hub");
   const [aiMode, setAiMode] = useState<'assistant' | 'predictive' | 'orchestrator'>('orchestrator');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Swipe gesture states
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  const [pauseTimer, setPauseTimer] = useState(null);
+
+  const minSwipeDistance = 50;
+  const pauseDuration = 1000;
 
   // Real-time message stream
   const { data: messages = [], isLoading } = useQuery({
@@ -162,7 +169,7 @@ export default function CommunicationHub() {
 
         recognition.onstart = () => setIsListening(true);
         recognition.onend = () => setIsListening(false);
-        
+
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
           setMessage(transcript);
@@ -193,6 +200,54 @@ export default function CommunicationHub() {
     }
   };
 
+  // Swipe gesture handlers
+  const handleTouchStart = (e: TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    const distance = touchStart - touchEnd;
+
+    if (Math.abs(distance) > minSwipeDistance) {
+      // Swipe detected
+      if (distance > 0) {
+        // Swipe Left - Trigger Quick Action (e.g., first one)
+        toast({
+          title: "Quick Action Triggered",
+          description: "Creating task from message..."
+        });
+
+        // Pause for the specified duration
+        setPauseTimer(
+          setTimeout(() => {
+            // Reset timer
+            setPauseTimer(null);
+          }, pauseDuration)
+        );
+
+      } else {
+        // Swipe Right - Trigger another Quick Action (e.g., second one)
+        toast({
+          title: "Quick Action Triggered",
+          description: "Requesting coverage..."
+        });
+
+           // Pause for the specified duration
+           setPauseTimer(
+            setTimeout(() => {
+              // Reset timer
+              setPauseTimer(null);
+            }, pauseDuration)
+          );
+      }
+    }
+  };
+
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -214,7 +269,12 @@ export default function CommunicationHub() {
   }
 
   return (
-    <div className="space-y-6">
+    <div 
+      className="space-y-6"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">

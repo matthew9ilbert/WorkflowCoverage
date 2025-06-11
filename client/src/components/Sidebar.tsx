@@ -110,24 +110,19 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
               return (
                 <div key={item.name} className="relative group">
-                  <Link href={item.href}>
-                    <a 
-                      className={cn(
-                        "nav-item",
-                        isActive 
-                          ? "active bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium" 
-                          : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                      )}
-                      onClick={() => onClose()}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.name}</span>
-                      {item.badge && (
-                        <Badge variant="secondary" className="ml-auto text-xs bg-blue-100 text-blue-700">
-                          {item.badge}
-                        </Badge>
-                      )}
-                    </a>
+                  <Link href={item.href} className={cn(
+                    "flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group-hover:bg-gray-100 dark:group-hover:bg-gray-800",
+                    isActive 
+                      ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700 dark:bg-blue-900/20 dark:text-blue-300" 
+                      : "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  )}>
+                    <Icon className={cn("h-5 w-5", isActive ? "text-blue-700 dark:text-blue-300" : "text-gray-500 dark:text-gray-400")} />
+                    <span>{item.name}</span>
+                    {item.badge && (
+                      <Badge variant="secondary" className="ml-auto">
+                        {item.badge}
+                      </Badge>
+                    )}
                   </Link>
                   {isCustom && (
                     <Button
