@@ -13,6 +13,7 @@ import TaskManagement from "@/pages/TaskManagement";
 import Templates from "@/pages/Templates";
 import Announcements from "@/pages/Announcements";
 import TextScanning from "@/pages/TextScanning";
+import MessageMonitoring from "@/pages/MessageMonitoring";
 import Analytics from "@/pages/Analytics";
 import NotFound from "@/pages/not-found";
 
@@ -45,6 +46,7 @@ function Router() {
               <Route path="/templates" component={Templates} />
               <Route path="/announcements" component={Announcements} />
               <Route path="/scanning" component={TextScanning} />
+              <Route path="/monitoring" component={MessageMonitoring} />
               <Route path="/analytics" component={Analytics} />
               <Route component={NotFound} />
             </Switch>
