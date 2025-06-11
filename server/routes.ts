@@ -270,7 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!content || !source) {
         return res.status(400).json({ message: "Content and source are required" });
       }
-      
+
       const result = await storage.processTextInput(content, source);
       res.json(result);
     } catch (error) {
@@ -305,6 +305,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Apple Shortcuts API routes (public access for automation)
   app.use('/api/shortcuts', (await import('./shortcuts')).default);
+  // Communication routes
+  app.use('/api/communication', (await import('./routes/communication')).default);
 
   const httpServer = createServer(app);
   return httpServer;

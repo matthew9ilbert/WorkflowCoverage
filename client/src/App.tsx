@@ -16,6 +16,7 @@ import TextScanning from "@/pages/TextScanning";
 import MessageMonitoring from "@/pages/MessageMonitoring";
 import Analytics from "@/pages/Analytics";
 import NotFound from "@/pages/not-found";
+import CommunicationHub from '@/pages/CommunicationHub';
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -45,6 +46,7 @@ function Router() {
               <Route path="/tasks" component={TaskManagement} />
               <Route path="/templates" component={Templates} />
               <Route path="/announcements" component={Announcements} />
+              <Route path="/communication-hub" component={CommunicationHub} />
               <Route path="/scanning" component={TextScanning} />
               <Route path="/monitoring" component={MessageMonitoring} />
               <Route path="/analytics" component={Analytics} />

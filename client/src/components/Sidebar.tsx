@@ -16,7 +16,8 @@ import {
   Edit,
   X,
   Check,
-  Monitor
+  Monitor,
+  MessageCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -32,6 +34,7 @@ interface SidebarProps {
 
 const defaultNavigation = [
   { name: "Dashboard", href: "/", icon: Home },
+  { name: "Communication Hub", href: "/communication-hub", icon: MessageCircle, badge: 'NEW' },
   { name: "Contact Directory", href: "/contacts", icon: Users },
   { name: "Shift Coverage", href: "/coverage", icon: Clock },
   { name: "Task Management", href: "/tasks", icon: CheckSquare },
@@ -52,6 +55,7 @@ const iconOptions = [
   { name: "BarChart2", component: BarChart2 },
   { name: "Activity", component: Activity },
   { name: "Monitor", component: Monitor },
+  { name: "MessageCircle", component: MessageCircle },
 ];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
@@ -118,6 +122,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                     >
                       <Icon className="w-5 h-5" />
                       <span>{item.name}</span>
+                      {item.badge && (
+                        <Badge variant="secondary" className="ml-auto text-xs bg-blue-100 text-blue-700">
+                          {item.badge}
+                        </Badge>
+                      )}
                     </a>
                   </Link>
                   {isCustom && (
@@ -133,7 +142,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </div>
               );
             })}
-            
+
             {/* Add Custom Entry Button */}
             <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
               <DialogTrigger asChild>
