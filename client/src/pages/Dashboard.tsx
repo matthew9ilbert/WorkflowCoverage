@@ -57,9 +57,11 @@ export default function Dashboard() {
                 <p className="text-gray-500 text-sm font-medium">Total Employees</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalEmployees}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
+              <Link href="/employees">
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center cursor-pointer">
+                  <Users className="w-6 h-6 text-blue-600" />
+                </div>
+              </Link>
             </div>
             <div className="flex items-center mt-4 text-green-600 text-sm">
               <TrendingUp className="w-4 h-4 mr-1" />
@@ -75,9 +77,11 @@ export default function Dashboard() {
                 <p className="text-gray-500 text-sm font-medium">Active Tasks</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{stats.activeTasks}</p>
               </div>
-              <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center">
-                <CheckSquare className="w-6 h-6 text-orange-600" />
-              </div>
+              <Link href="/tasks">
+                <div className="w-12 h-12 bg-orange-50 rounded-lg flex items-center justify-center cursor-pointer">
+                  <CheckSquare className="w-6 h-6 text-orange-600" />
+                </div>
+              </Link>
             </div>
             <div className="flex items-center mt-4 text-red-600 text-sm">
               <TrendingDown className="w-4 h-4 mr-1" />
@@ -93,9 +97,11 @@ export default function Dashboard() {
                 <p className="text-gray-500 text-sm font-medium">Coverage Requests</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{stats.coverageRequests}</p>
               </div>
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                <Clock className="w-6 h-6 text-blue-500" />
-              </div>
+              <Link href="/coverage">
+                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center cursor-pointer">
+                  <Clock className="w-6 h-6 text-blue-500" />
+                </div>
+              </Link>
             </div>
             <div className="flex items-center mt-4 text-gray-500 text-sm">
               <span>No change</span>
@@ -110,9 +116,11 @@ export default function Dashboard() {
                 <p className="text-gray-500 text-sm font-medium">Completion Rate</p>
                 <p className="text-2xl font-bold text-gray-900 mt-1">{stats.completionRate}%</p>
               </div>
-              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                <Target className="w-6 h-6 text-green-600" />
-              </div>
+              <Link href="/completion">
+                <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center cursor-pointer">
+                  <Target className="w-6 h-6 text-green-600" />
+                </div>
+              </Link>
             </div>
             <div className="flex items-center mt-4 text-green-600 text-sm">
               <TrendingUp className="w-4 h-4 mr-1" />
