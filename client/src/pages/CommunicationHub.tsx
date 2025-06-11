@@ -200,9 +200,12 @@ export default function CommunicationHub() {
     }
   };
 
-  // Swipe gesture handlers
+  // Swipe gesture handlers with debounce effect
+  const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
+
   const handleTouchStart = (e: TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
+    clearTimeout(debounceTimeout.current as NodeJS.Timeout);
   };
 
   const handleTouchMove = (e: TouchEvent) => {

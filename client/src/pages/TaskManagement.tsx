@@ -250,6 +250,19 @@ export default function TaskManagement() {
         </CardContent>
       </Card>
       
+      {/* To-Do List */}
+      <Card className="bg-green-50 border-2 border-green-300 mb-6">
+        <CardHeader>
+          <CardTitle>To-Do List</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Button className="w-full mb-3 justify-center" onClick={() => alert('Add new to-do item')}>
+            Add New To-Do
+          </Button>
+          <p>Customize to-do list content...</p>
+        </CardContent>
+      </Card>
+
       {/* Task Board */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pending Tasks */}

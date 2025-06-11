@@ -172,6 +172,15 @@ export default function Dashboard() {
             <CardHeader className="pb-4">
               <CardTitle className="text-lg font-semibold text-gray-900">Quick Actions</CardTitle>
             </CardHeader>
+
+<Button 
+  className="w-full justify-start bg-indigo-600 text-white hover:bg-indigo-700"
+  onClick={() => alert('Quick Action Executed')}
+>
+  <UserPlus className="w-5 h-5 mr-3" />
+  New Quick Action
+</Button>
+
             <CardContent className="space-y-3">
               <Button 
                 className="w-full justify-start bg-blue-600 text-white hover:bg-blue-700"

@@ -55,6 +55,19 @@ export default function Announcements() {
         </Button>
       </div>
       
+      {/* Bulletin Board */}
+      <Card className="bg-yellow-50 border-2 border-yellow-300 mb-6">
+        <CardHeader>
+          <CardTitle>Bulletin Board</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Button className="w-full mb-3 justify-center" onClick={() => alert('Post new announcement')}>
+            Post New Announcement
+          </Button>
+          <p>Customize bulletin board content...</p>
+        </CardContent>
+      </Card>
+
       {/* Announcement List */}
       <div className="space-y-4">
         {announcements.length === 0 ? (

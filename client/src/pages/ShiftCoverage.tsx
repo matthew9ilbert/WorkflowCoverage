@@ -61,6 +61,23 @@ export default function ShiftCoverage() {
         </Button>
       </div>
       
+      {/* Calendar */}
+      <div className="mb-6">
+        <Card>
+          <CardContent className="p-6">
+            <Calendar
+              onDayClick={(day) => console.log('Selected day:', day)}
+              selected={new Date()}
+              colorScheme="blue"
+              labels={({ date }) => ({
+                content: `Events`,
+                style: { backgroundColor: '#ffeb3b', color: '#ffffff' }
+              })}
+            />
+          </CardContent>
+        </Card>
+      </div>
+  
       {/* Coverage Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
