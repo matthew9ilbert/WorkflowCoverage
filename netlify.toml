@@ -1,16 +1,30 @@
 [build]
-  command = "npm run build"
-  publish = "dist/client"  # Updated to match Vite's output directory
+  command = "npm install && npm run build"
+  publish = "dist/client"
 
 [build.environment]
-  NODE_VERSION = "18.x"
+  NODE_VERSION = "18.17.1"
 
+[context.production.environment]
+  JWT_SECRET = "{{generated-secret-will-go-here}}"  # Replace with output from command
+
+# API routes - proxy to Express server
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/:splat"
+  status = 200
+  force = true
+
+# Client-side routing fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"

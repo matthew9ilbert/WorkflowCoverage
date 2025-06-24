@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -12,50 +12,111 @@ import { z } from "zod";
 import { CoverageService } from './services/coverage.service';
 import { AIAssistantService } from './services/aiAssistant.service';
 import { verifyAIAccess } from './middleware/aiAuth';
+import path from 'path';
+import type { ParsedQs } from 'qs';
+import { verifyAuthToken, createSession } from './auth';
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: {
+      claims: {
+        sub: string;
+        email?: string;
+        name?: string;
+      };
+    };
+    context?: Record<string, any>;
+  }
+}
+
+// Helper function for error handling
+function handleError(error: unknown, res: Response) {
+  if (error instanceof z.ZodError) {
+    return res.status(400).json({ message: "Validation error", errors: error.errors });
+  }
+  if (error instanceof Error) {
+    return res.status(500).json({ message: error.message });
+  }
+  return res.status(500).json({ message: "Unknown error occurred" });
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
+      handleError(error, res);
+    }
+  });
+
+  app.post('/api/login', async (req: Request, res: Response) => {
+    try {
+      const { token } = req.body;
+      
+      if (!token || typeof token !== 'string') {
+        return res.status(400).json({ message: "Valid authentication token required" });
+      }
+      
+      const user = await verifyAuthToken(token);
+      
+      if (!user) {
+        return res.status(401).json({ message: "Invalid or expired credentials" });
+      }
+      
+      const sessionToken = await createSession(user.id);
+      
+      res.json({
+        token: sessionToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name
+        }
+      });
+    } catch (err: unknown) {
+      handleError(err, res);
     }
   });
 
   // Employee routes
-  app.get('/api/employees', isAuthenticated, async (req, res) => {
+  app.get('/api/employees', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const employees = await storage.getEmployees();
       res.json(employees);
     } catch (error) {
-      console.error("Error fetching employees:", error);
-      res.status(500).json({ message: "Failed to fetch employees" });
+      handleError(error, res);
     }
   });
 
-  app.post('/api/employees', isAuthenticated, async (req, res) => {
+  app.post('/api/employees', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const validatedData = insertEmployeeSchema.parse(req.body);
       const employee = await storage.createEmployee(validatedData);
       res.status(201).json(employee);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error creating employee:", error);
-        res.status(500).json({ message: "Failed to create employee" });
-      }
+      handleError(error, res);
     }
   });
 
-  app.put('/api/employees/:id', isAuthenticated, async (req, res) => {
+  app.put('/api/employees/:id', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertEmployeeSchema.partial().parse(req.body);
@@ -65,53 +126,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(employee);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error updating employee:", error);
-        res.status(500).json({ message: "Failed to update employee" });
-      }
+      handleError(error, res);
     }
   });
 
-  app.delete('/api/employees/:id', isAuthenticated, async (req, res) => {
+  app.delete('/api/employees/:id', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const id = parseInt(req.params.id);
       await storage.deleteEmployee(id);
       res.status(204).send();
     } catch (error) {
-      console.error("Error deleting employee:", error);
-      res.status(500).json({ message: "Failed to delete employee" });
+      handleError(error, res);
     }
   });
 
   // Task routes
-  app.get('/api/tasks', isAuthenticated, async (req, res) => {
+  app.get('/api/tasks', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const tasks = await storage.getTasks();
       res.json(tasks);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
-      res.status(500).json({ message: "Failed to fetch tasks" });
+      handleError(error, res);
     }
   });
 
-  app.post('/api/tasks', isAuthenticated, async (req, res) => {
+  app.post('/api/tasks', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const validatedData = insertTaskSchema.parse(req.body);
       const task = await storage.createTask(validatedData);
       res.status(201).json(task);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error creating task:", error);
-        res.status(500).json({ message: "Failed to create task" });
-      }
+      handleError(error, res);
     }
   });
 
-  app.put('/api/tasks/:id', isAuthenticated, async (req, res) => {
+  app.put('/api/tasks/:id', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertTaskSchema.partial().parse(req.body);
@@ -121,42 +182,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(task);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error updating task:", error);
-        res.status(500).json({ message: "Failed to update task" });
-      }
+      handleError(error, res);
     }
   });
 
   // Coverage request routes
-  app.get('/api/coverage-requests', isAuthenticated, async (req, res) => {
+  app.get('/api/coverage-requests', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const requests = await storage.getCoverageRequests();
       res.json(requests);
     } catch (error) {
-      console.error("Error fetching coverage requests:", error);
-      res.status(500).json({ message: "Failed to fetch coverage requests" });
+      handleError(error, res);
     }
   });
 
-  app.post('/api/coverage-requests', isAuthenticated, async (req, res) => {
+  app.post('/api/coverage-requests', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const validatedData = insertCoverageRequestSchema.parse(req.body);
       const request = await storage.createCoverageRequest(validatedData);
       res.status(201).json(request);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error creating coverage request:", error);
-        res.status(500).json({ message: "Failed to create coverage request" });
-      }
+      handleError(error, res);
     }
   });
 
-  app.put('/api/coverage-requests/:id', isAuthenticated, async (req, res) => {
+  app.put('/api/coverage-requests/:id', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertCoverageRequestSchema.partial().parse(req.body);
@@ -166,17 +225,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(request);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error updating coverage request:", error);
-        res.status(500).json({ message: "Failed to update coverage request" });
-      }
+      handleError(error, res);
     }
   });
 
   // Coverage routes
-  app.post('/api/coverage/request', isAuthenticated, async (req: any, res) => {
+  app.post('/api/coverage/request', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const { shift, reason } = insertCoverageRequestSchema.parse(req.body);
       const result = await CoverageService.requestCoverage(
@@ -186,44 +243,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       res.json(result);
     } catch (err: unknown) {
-      const error = err instanceof Error ? err.message : 'Request failed';
-      res.status(400).json({ error });
+      handleError(err, res);
     }
   });
 
-  app.get('/api/coverage/history', isAuthenticated, async (req: any, res) => {
+  app.get('/api/coverage/history', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
-      const employeeId = req.query.employeeId;
+      const employeeId = typeof req.query.employeeId === 'string' ? req.query.employeeId : undefined;
       const history = await CoverageService.getCoverageHistory(employeeId);
       res.json(history);
     } catch (err: unknown) {
-      const error = err instanceof Error ? err.message : 'Failed to get history';
-      res.status(400).json({ error });
+      handleError(err, res);
     }
   });
 
-  app.post('/api/coverage/approve/:id', isAuthenticated, async (req: any, res) => {
+  app.post('/api/coverage/approve/:id', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const result = await CoverageService.approveCoverage(req.params.id, req.user.claims.sub);
       res.json(result);
     } catch (err: unknown) {
-      const error = err instanceof Error ? err.message : 'Failed to approve coverage';
-      res.status(400).json({ error });
+      handleError(err, res);
     }
   });
 
   // Announcement routes
-  app.get('/api/announcements', isAuthenticated, async (req, res) => {
+  app.get('/api/announcements', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const announcements = await storage.getAnnouncements();
       res.json(announcements);
     } catch (error) {
-      console.error("Error fetching announcements:", error);
-      res.status(500).json({ message: "Failed to fetch announcements" });
+      handleError(error, res);
     }
   });
 
-  app.post('/api/announcements', isAuthenticated, async (req: any, res) => {
+  app.post('/api/announcements', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const userId = req.user.claims.sub;
       const validatedData = insertAnnouncementSchema.parse({
@@ -233,38 +298,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const announcement = await storage.createAnnouncement(validatedData);
       res.status(201).json(announcement);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Validation error", errors: error.errors });
-      } else {
-        console.error("Error creating announcement:", error);
-        res.status(500).json({ message: "Failed to create announcement" });
-      }
+      handleError(error, res);
     }
   });
 
   // Analytics routes
-  app.get('/api/analytics/dashboard', isAuthenticated, async (req, res) => {
+  app.get('/api/analytics/dashboard', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const stats = await storage.getDashboardStats();
       res.json(stats);
     } catch (error) {
-      console.error("Error fetching dashboard stats:", error);
-      res.status(500).json({ message: "Failed to fetch dashboard statistics" });
+      handleError(error, res);
     }
   });
 
-  app.get('/api/analytics/metrics', isAuthenticated, async (req, res) => {
+  app.get('/api/analytics/metrics', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const metrics = await storage.getAnalyticsMetrics();
       res.json(metrics);
     } catch (error) {
-      console.error("Error fetching analytics metrics:", error);
-      res.status(500).json({ message: "Failed to fetch analytics metrics" });
+      handleError(error, res);
     }
   });
 
   // Text scanning route
-  app.post('/api/text-scan', isAuthenticated, async (req, res) => {
+  app.post('/api/text-scan', isAuthenticated, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const { content, source } = req.body;
       if (!content || !source) {
@@ -274,32 +341,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await storage.processTextInput(content, source);
       res.json(result);
     } catch (error) {
-      console.error("Error processing text input:", error);
-      res.status(500).json({ message: "Failed to process text input" });
+      handleError(error, res);
     }
   });
 
   // AI Assistant endpoints
-  app.post('/api/ai/assist', isAuthenticated, verifyAIAccess, async (req: any, res) => {
+  app.post('/api/ai/assist', isAuthenticated, verifyAIAccess, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const response = await AIAssistantService.getInstance().handleRequest(
         req.body.message,
-        req.context
+        req.context || {}
       );
       res.json(response);
     } catch (err: unknown) {
-      const error = err instanceof Error ? err.message : 'AI assistance unavailable';
-      res.status(500).json({ error });
+      handleError(err, res);
     }
   });
 
-  app.get('/api/ai/insights', isAuthenticated, verifyAIAccess, async (req, res) => {
+  app.get('/api/ai/insights', isAuthenticated, verifyAIAccess, async (req: Request, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
     try {
       const insights = await AIAssistantService.getInstance().getCodebaseInsights();
       res.json(insights);
     } catch (err: unknown) {
-      const error = err instanceof Error ? err.message : 'Failed to get insights';
-      res.status(500).json({ error });
+      handleError(err, res);
     }
   });
 
@@ -307,6 +377,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/shortcuts', (await import('./shortcuts')).default);
   // Communication routes
   app.use('/api/communication', (await import('./routes/communication')).default);
+
+  // Client-side routing fallback
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../client/dist/client/index.html'));
+  });
 
   const httpServer = createServer(app);
   return httpServer;
